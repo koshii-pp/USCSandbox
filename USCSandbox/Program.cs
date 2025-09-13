@@ -1,4 +1,4 @@
-﻿using AssetsTools.NET;
+using AssetsTools.NET;
 using AssetsTools.NET.Extra;
 using USCSandbox.Processor;
 using UnityVersion = AssetRipper.Primitives.UnityVersion;
