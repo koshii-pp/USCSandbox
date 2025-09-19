@@ -77,7 +77,7 @@ namespace USCSandbox
             }
 
             var shaderPathId = -1L;
-            if (args.Length > 2)
+            if (args.Length > 2 && args[2] != "all")
                 shaderPathId = long.Parse(args[2]);
             var shaderPlatform = args.Length > 3 ? Enum.Parse<GPUPlatform>(args[3]) : GPUPlatform.d3d11;
             
@@ -114,7 +114,16 @@ namespace USCSandbox
                     return;
                 }
 
-                ver = UnityVersion.Parse(bundleFile.file.Header.EngineVersion);
+                var detectedVersion = bundleFile.file.Header.EngineVersion;
+                Console.WriteLine($"Detected Unity version: {detectedVersion}");
+                
+                if (string.IsNullOrEmpty(detectedVersion) || detectedVersion.StartsWith("0.0.0"))
+                {
+                    detectedVersion = "6000.0.50f1";
+                    Console.WriteLine($"Using fallback Unity version: {detectedVersion}");
+                }
+                
+                ver = UnityVersion.Parse(detectedVersion);
                 Console.WriteLine($"Unity version: {ver}");
 
                 Console.WriteLine("Loading class package...");
@@ -123,7 +132,7 @@ namespace USCSandbox
                 Console.WriteLine($"Loading class database for Unity version: {ver}");
                 try 
                 {
-                    manager.LoadClassDatabaseFromPackage(bundleFile.file.Header.EngineVersion);
+                    manager.LoadClassDatabaseFromPackage(detectedVersion);
                     var classDb = manager.ClassPackage.GetClassDatabase(ver.ToString());
                     if (classDb == null)
                     {
